@@ -5,7 +5,6 @@ import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
-import pl.hansel101.hanselvanish.Commands.IsHiddenCommand;
 import pl.hansel101.hanselvanish.Commands.VanishCommand;
 import pl.hansel101.hanselvanish.Events.PlayerReady;
 
@@ -28,7 +27,6 @@ public class HanselVanish extends JavaPlugin {
 
         // registering commands
         this.getCommandRegistry().registerCommand(new VanishCommand(this, "vanish", "Toggles vanish for player", false));
-        this.getCommandRegistry().registerCommand(new IsHiddenCommand(this, "ishidden", "Toggles vanish for player", false));
 
         // registering events
         this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, new PlayerReady(this)::handle);
