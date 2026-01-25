@@ -1,0 +1,18 @@
+{
+  "Group": "pl.hansel101",
+  "Name": "HanselVanish",
+  "Version": "1.1",
+  "Main": "pl.hansel101.hanselvanish.HanselVanish",
+  "IncludesAssetPack": true,
+  "Authors": [
+    {
+      "Name": "Hansel",
+      "Url": "https://hansel101.pl"
+    }
+  ],
+
+  "Dependencies": {
+    "Zoltus:TinyMessage": "*",
+    "Buuz135:MultipleHUD": ">=1.0.3"
+  }
+}

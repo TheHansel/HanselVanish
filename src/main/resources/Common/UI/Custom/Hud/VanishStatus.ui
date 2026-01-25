@@ -1,0 +1,10 @@
+Group {
+  LayoutMode: Center;
+  Anchor: (Width: 100, Height: 36, Bottom: 180);
+  Background: #212d3d(0.85);
+
+  Label #Vanish {
+    Style: (FontSize: 18, Alignment: Center);
+    Text: "Vanish";
+  }
+}
