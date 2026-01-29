@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static pl.hansel101.hanselvanish.HanselVanish.LOG;
 
+
 public class PlayerReady {
     HanselVanish instance;
 

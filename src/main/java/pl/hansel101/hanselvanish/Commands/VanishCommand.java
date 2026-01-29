@@ -42,7 +42,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
                            @NonNullDecl World world,
                            @NonNullDecl Store<EntityStore> store) {
         UUID playerUUID = player.getUuid();
-
+        
         if(!instance.vanishedPlayers.contains(playerUUID)) {
             final RemoveFromServerPlayerList packet = new RemoveFromServerPlayerList(new UUID[]{playerUUID});
 
@@ -54,7 +54,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
                                 target.getHiddenPlayersManager().hidePlayer(playerUUID);
 
                                 target.getPacketHandler().write(packet);
-
+                                
                                 Ref<EntityStore> targetRef = target.getReference();
                                 if(targetRef != null) {
                                     Player targetEntity = iterWorld.getEntityStore().getStore().getComponent(targetRef, Player.getComponentType());
