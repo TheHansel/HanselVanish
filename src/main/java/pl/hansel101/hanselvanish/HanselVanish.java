@@ -10,7 +10,6 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import pl.hansel101.hanselvanish.Commands.VanishCommand;
 import pl.hansel101.hanselvanish.Components.PlayerVanishStatus;
-import pl.hansel101.hanselvanish.Events.PlayerReady;
 import pl.hansel101.hanselvanish.Systems.PlayerJoinSystem;
 
 import java.util.Set;
@@ -30,7 +29,6 @@ public class HanselVanish extends JavaPlugin {
         LOG = HytaleLogger.forEnclosingClass();
         LOG.atInfo().log("Loading HanselVanish!");
 
-
         ComponentRegistryProxy<EntityStore> registry = this.getEntityStoreRegistry();
 
         // registering components
@@ -43,8 +41,5 @@ public class HanselVanish extends JavaPlugin {
 
         // registering commands
         this.getCommandRegistry().registerCommand(new VanishCommand(this, "vanish", "Toggles vanish for player", false));
-
-        // registering events
-        this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, new PlayerReady(this)::handle);
     }
 }
