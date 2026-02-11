@@ -65,16 +65,13 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
             PlayerVanishStatus vanishStatus = store.getComponent(ref, PlayerVanishStatus.getComponentType());
             if(vanishStatus == null) {
                 commandBuffer.addComponent(ref, PlayerVanishStatus.getComponentType(), new PlayerVanishStatus());
-            } else {
-                if(vanishStatus.isVanished()) {
-                    instance.vanishedPlayers.add(playerRef.getUuid());
-                }
             }
 
             UUID playerUUID = playerRef.getUuid();
 
             RemoveFromServerPlayerList packet = new RemoveFromServerPlayerList(instance.vanishedPlayers.toArray(new UUID[]{}));
-            if(instance.vanishedPlayers.contains(playerUUID)) {
+            assert vanishStatus != null;
+            if(vanishStatus.isVanished()) {
                 Universe.get().getWorlds().forEach((_, iterWorld) -> {
                     iterWorld.execute(() -> {
                         iterWorld.getPlayerRefs().stream()
@@ -84,6 +81,7 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
                     });
                 });
 
+                instance.vanishedPlayers.add(playerUUID);
                 MultipleHUD.getInstance().setCustomHud(playerEntity, playerRef, "HanselVanish_VanishStatus", new VanishStatus(playerRef));
                 playerRef.sendMessage(TinyMsg.parse("<c:green>You are still invisible."));
             }
@@ -110,18 +108,6 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
                                @NonNullDecl RemoveReason removeReason,
                                @NonNullDecl Store<EntityStore> store,
                                @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        if(removeReason != RemoveReason.UNLOAD) return;
 
-
-        UUID playerUUID = Objects.requireNonNull(store.getComponent(ref, UUIDComponent.getComponentType())).getUuid();
-
-        PlayerVanishStatus vanishStatus = store.getComponent(ref, PlayerVanishStatus.getComponentType());
-        assert vanishStatus != null;
-
-        if(instance.vanishedPlayers.contains(playerUUID)) {
-            vanishStatus.vanishOn();
-        } else {
-            vanishStatus.vanishOff();
-        }
     }
 }

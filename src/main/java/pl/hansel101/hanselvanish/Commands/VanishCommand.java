@@ -3,12 +3,16 @@ package pl.hansel101.hanselvanish.Commands;
 import com.buuz135.mhud.MultipleHUD;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.FormattedMessage;
 import com.hypixel.hytale.protocol.packets.interface_.AddToServerPlayerList;
 import com.hypixel.hytale.protocol.packets.interface_.RemoveFromServerPlayerList;
 import com.hypixel.hytale.protocol.packets.interface_.ServerPlayerListPlayer;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractTargetPlayerCommand;
+import com.hypixel.hytale.server.core.entity.Entity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
@@ -17,6 +21,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import fi.sulku.hytale.TinyMsg;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+import pl.hansel101.hanselvanish.Components.PlayerVanishStatus;
 import pl.hansel101.hanselvanish.HanselVanish;
 import pl.hansel101.hanselvanish.UI.Empty;
 import pl.hansel101.hanselvanish.UI.VanishStatus;
@@ -42,8 +47,14 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
                            @NonNullDecl World world,
                            @NonNullDecl Store<EntityStore> store) {
         UUID playerUUID = player.getUuid();
-        
-        if(!instance.vanishedPlayers.contains(playerUUID)) {
+
+        PlayerVanishStatus vanishStatus = store.getComponent(ref, PlayerVanishStatus.getComponentType());
+        if(vanishStatus == null) {
+            LOGGER.atSevere().log("Failed to get PlayerVanishStatus for %s", player.getUsername());
+            return;
+        }
+
+        if(!vanishStatus.isVanished()) {
             final RemoveFromServerPlayerList packet = new RemoveFromServerPlayerList(new UUID[]{playerUUID});
 
             Universe.get().getWorlds().forEach((_, iterWorld) -> {
@@ -54,7 +65,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
                                 target.getHiddenPlayersManager().hidePlayer(playerUUID);
 
                                 target.getPacketHandler().write(packet);
-                                
+
                                 Ref<EntityStore> targetRef = target.getReference();
                                 if(targetRef != null) {
                                     Player targetEntity = iterWorld.getEntityStore().getStore().getComponent(targetRef, Player.getComponentType());
@@ -72,7 +83,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
                 LOGGER.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
             }
 
-
+            vanishStatus.vanishOn();
             instance.vanishedPlayers.add(playerUUID);
             if(Objects.equals(playerUUID, ctx.sender().getUuid())) {
                 ctx.sendMessage(TinyMsg.parse("<c:green>You are now invisible."));
@@ -93,12 +104,14 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
             });
 
             Player playerEntity = store.getComponent(ref, Player.getComponentType());
+
             if(playerEntity != null) {
                 MultipleHUD.getInstance().setCustomHud(playerEntity, player, "HanselVanish_VanishStatus", new Empty(player));
             } else {
                 LOGGER.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
             }
 
+            vanishStatus.vanishOff();
             instance.vanishedPlayers.remove(playerUUID);
             if(Objects.equals(playerUUID, ctx.sender().getUuid())) {
                 ctx.sendMessage(TinyMsg.parse("<c:red>You are no longer invisible."));
