@@ -3,16 +3,12 @@ package pl.hansel101.hanselvanish.Commands;
 import com.buuz135.mhud.MultipleHUD;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.FormattedMessage;
 import com.hypixel.hytale.protocol.packets.interface_.AddToServerPlayerList;
 import com.hypixel.hytale.protocol.packets.interface_.RemoveFromServerPlayerList;
 import com.hypixel.hytale.protocol.packets.interface_.ServerPlayerListPlayer;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractTargetPlayerCommand;
-import com.hypixel.hytale.server.core.entity.Entity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
@@ -28,6 +24,8 @@ import pl.hansel101.hanselvanish.UI.VanishStatus;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import static pl.hansel101.hanselvanish.HanselVanish.LOG;
 
 public class VanishCommand extends AbstractTargetPlayerCommand {
     private final HanselVanish instance;
@@ -50,7 +48,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
 
         PlayerVanishStatus vanishStatus = store.getComponent(ref, PlayerVanishStatus.getComponentType());
         if(vanishStatus == null) {
-            LOGGER.atSevere().log("Failed to get PlayerVanishStatus for %s", player.getUsername());
+            LOG.atSevere().log("Failed to get PlayerVanishStatus for %s", player.getUsername());
             return;
         }
 
@@ -80,7 +78,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
             if(playerEntity != null) {
                 MultipleHUD.getInstance().setCustomHud(playerEntity, player, "HanselVanish_VanishStatus", new VanishStatus(player));
             } else {
-                LOGGER.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
+                LOG.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
             }
 
             vanishStatus.vanishOn();
@@ -108,7 +106,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
             if(playerEntity != null) {
                 MultipleHUD.getInstance().setCustomHud(playerEntity, player, "HanselVanish_VanishStatus", new Empty(player));
             } else {
-                LOGGER.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
+                LOG.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
             }
 
             vanishStatus.vanishOff();

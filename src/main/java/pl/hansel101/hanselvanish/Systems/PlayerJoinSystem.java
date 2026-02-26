@@ -5,7 +5,6 @@ import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefSystem;
 import com.hypixel.hytale.protocol.packets.interface_.RemoveFromServerPlayerList;
-import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.HiddenPlayersManager;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
@@ -45,7 +44,7 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
                               @NonNullDecl Store<EntityStore> store,
                               @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         if(addReason != AddReason.LOAD) return;
-
+        
         Player playerEntity = commandBuffer.getComponent(ref, Player.getComponentType());
         if(playerEntity == null) {
             LOG.atSevere().log("Failed to get Player!");
