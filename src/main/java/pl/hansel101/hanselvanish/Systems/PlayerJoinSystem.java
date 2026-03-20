@@ -73,8 +73,17 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
             if(vanishStatus.isVanished()) {
                 Universe.get().getWorlds().forEach((_, iterWorld) -> {
                     iterWorld.execute(() -> {
-                        iterWorld.getPlayerRefs().stream()
-                                .filter(a -> !(Objects.equals(a, playerRef) || PermissionsModule.get().hasPermission(a.getUuid(), "hanselvanish.canseevanished"))).forEach(targetPlayer -> {
+                        iterWorld.getPlayerRefs().stream().filter(target -> {
+                                    if (Objects.equals(target, playerRef)) {
+                                        return false;
+                                    }
+                                    if(PermissionsModule.get().hasPermission(target.getUuid(), "hanselvanish.canseevanished")) {
+                                        target.sendMessage(TinyMsg.parse("<c:#CCCCCC><i>" + playerRef.getUsername() + " <c:#C2C2C2>has joined vanished."));
+                                        return false;
+                                    }
+
+                                    return true;
+                                }).forEach(targetPlayer -> {
                                     targetPlayer.getPacketHandler().write(packet);
                                 });
                     });

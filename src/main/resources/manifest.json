@@ -1,7 +1,7 @@
 {
   "Group": "pl.hansel101",
   "Name": "HanselVanish",
-  "Version": "1.4",
+  "Version": "1.6",
   "Main": "pl.hansel101.hanselvanish.HanselVanish",
   "IncludesAssetPack": true,
   "Authors": [

@@ -9,6 +9,7 @@ import com.hypixel.hytale.protocol.packets.interface_.ServerPlayerListPlayer;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractTargetPlayerCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.modules.entity.player.PlayerSkinComponent;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
@@ -47,35 +48,49 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
         UUID playerUUID = player.getUuid();
 
         PlayerVanishStatus vanishStatus = store.getComponent(ref, PlayerVanishStatus.getComponentType());
-        if(vanishStatus == null) {
+        if (vanishStatus == null) {
             LOG.atSevere().log("Failed to get PlayerVanishStatus for %s", player.getUsername());
             return;
         }
 
-        if(!vanishStatus.isVanished()) {
+        if (!vanishStatus.isVanished()) {
             final RemoveFromServerPlayerList packet = new RemoveFromServerPlayerList(new UUID[]{playerUUID});
+            final String username = player.getUsername(), worldName = world.getName();
 
-            Universe.get().getWorlds().forEach((_, iterWorld) -> {
+            Universe.get().getWorlds().forEach((iterWorldName, iterWorld) -> {
                 iterWorld.execute(() -> {
-                    iterWorld.getPlayerRefs().stream()
-                            .filter(target -> !(Objects.equals(target, player) || PermissionsModule.get().hasPermission(target.getUuid(), "hanselvanish.canseevanished")))
-                            .forEach(target -> {
+                    final boolean isSameWorld = iterWorldName.equals(worldName);
+                    iterWorld.getPlayerRefs().stream().filter(target -> {
+                                if (Objects.equals(target, player)) {
+                                    return false;
+                                }
+                                if(PermissionsModule.get().hasPermission(target.getUuid(), "hanselvanish.canseevanished")) {
+                                    target.sendMessage(TinyMsg.parse("<c:#CCCCCC><i>" + username + " <c:#C2C2C2>vanished."));
+                                    return false;
+                                }
+
+                                return true;
+                            }).forEach(target -> {
                                 target.getHiddenPlayersManager().hidePlayer(playerUUID);
 
                                 target.getPacketHandler().write(packet);
 
                                 Ref<EntityStore> targetRef = target.getReference();
-                                if(targetRef != null) {
+                                if (targetRef != null) {
                                     Player targetEntity = iterWorld.getEntityStore().getStore().getComponent(targetRef, Player.getComponentType());
                                     assert targetEntity != null;
                                     targetEntity.getWorldMapTracker().setPlayerMapFilter(who -> instance.vanishedPlayers.contains(who.getUuid()));
+                                }
+
+                                if(isSameWorld) {
+                                    instance.sendFakeLeaveMessage(target, username, iterWorldName);
                                 }
                             });
                 });
             });
 
             Player playerEntity = store.getComponent(ref, Player.getComponentType());
-            if(playerEntity != null) {
+            if (playerEntity != null) {
                 MultipleHUD.getInstance().setCustomHud(playerEntity, player, "HanselVanish_VanishStatus", new VanishStatus(player));
             } else {
                 LOG.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
@@ -83,7 +98,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
 
             vanishStatus.vanishOn();
             instance.vanishedPlayers.add(playerUUID);
-            if(Objects.equals(playerUUID, ctx.sender().getUuid())) {
+            if (Objects.equals(playerUUID, ctx.sender().getUuid())) {
                 ctx.sendMessage(TinyMsg.parse("<c:green>You are now invisible."));
             } else {
                 player.sendMessage(TinyMsg.parse("<c:green>You are now invisible."));
@@ -91,19 +106,35 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
             }
         } else {
             final AddToServerPlayerList packet = new AddToServerPlayerList(new ServerPlayerListPlayer[]{new ServerPlayerListPlayer(playerUUID, player.getUsername(), player.getWorldUuid(), 0)});
+            final String username = player.getUsername(), worldName = world.getName();
 
-             Universe.get().getWorlds().forEach((_, iterWorld) -> {
+            Universe.get().getWorlds().forEach((iterWorldName, iterWorld) -> {
                 iterWorld.execute(() -> {
-                    iterWorld.getPlayerRefs().forEach(target -> {
-                        target.getHiddenPlayersManager().showPlayer(playerUUID);
-                        target.getPacketHandler().write(packet);
-                    });
+                    final boolean isSameWorld = iterWorldName.equals(worldName);
+                    iterWorld.getPlayerRefs().stream().filter(target -> {
+                                if (Objects.equals(target, player)) {
+                                    return false;
+                                }
+                                if(PermissionsModule.get().hasPermission(target.getUuid(), "hanselvanish.canseevanished")) {
+                                    target.sendMessage(TinyMsg.parse("<c:#CCCCCC><i>" + username + " <c:#C2C2C2>is no longer vanished."));
+                                    return false;
+                                }
+
+                                return true;
+                            }).forEach(target -> {
+                                target.getHiddenPlayersManager().showPlayer(playerUUID);
+                                target.getPacketHandler().write(packet);
+
+                                if(isSameWorld) {
+                                    instance.sendFakeJoinMessage(target, username, iterWorldName);
+                                }
+                            });
                 });
             });
 
             Player playerEntity = store.getComponent(ref, Player.getComponentType());
 
-            if(playerEntity != null) {
+            if (playerEntity != null) {
                 MultipleHUD.getInstance().setCustomHud(playerEntity, player, "HanselVanish_VanishStatus", new Empty(player));
             } else {
                 LOG.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
@@ -111,15 +142,14 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
 
             vanishStatus.vanishOff();
             instance.vanishedPlayers.remove(playerUUID);
-            if(Objects.equals(playerUUID, ctx.sender().getUuid())) {
+            if (Objects.equals(playerUUID, ctx.sender().getUuid())) {
                 ctx.sendMessage(TinyMsg.parse("<c:red>You are no longer invisible."));
             } else {
                 player.sendMessage(TinyMsg.parse("<c:red>You are no longer invisible."));
+
                 ctx.sendMessage(TinyMsg.parse("<c:red>Disabled vanish for " + player.getUsername()));
             }
         }
 
     }
-
-
 }
