@@ -63,7 +63,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
                                 if (Objects.equals(target, player)) {
                                     return false;
                                 }
-                                if(PermissionsModule.get().hasPermission(target.getUuid(), "hanselvanish.canseevanished")) {
+                                if (PermissionsModule.get().hasPermission(target.getUuid(), "hanselvanish.canseevanished")) {
                                     target.sendMessage(TinyMsg.parse("<c:#CCCCCC><i>" + username + " <c:#C2C2C2>vanished."));
                                     return false;
                                 }
@@ -81,7 +81,7 @@ public class VanishCommand extends AbstractTargetPlayerCommand {
                                     targetEntity.getWorldMapTracker().setPlayerMapFilter(who -> instance.vanishedPlayers.contains(who.getUuid()));
                                 }
 
-                                if(isSameWorld) {
+                                if (isSameWorld) {
                                     instance.sendFakeLeaveMessage(target, username, iterWorldName);
                                 }
                             });

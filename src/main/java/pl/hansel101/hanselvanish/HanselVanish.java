@@ -39,7 +39,6 @@ public class HanselVanish extends JavaPlugin {
         LOG = HytaleLogger.forEnclosingClass();
         LOG.atInfo().log("Loading HanselVanish!");
 
-        // idk if i should do it like this but who cares
         configStore.save().thenRun(() -> {
             configStore.load().thenAccept(configRef::set);
         });
@@ -48,7 +47,7 @@ public class HanselVanish extends JavaPlugin {
 
         // registering components
         ComponentType<EntityStore, PlayerVanishStatus> componentType =
-                registry.registerComponent(PlayerVanishStatus.class, "HanselVanish_VanishStatus",PlayerVanishStatus.CODEC);
+                registry.registerComponent(PlayerVanishStatus.class, "HanselVanish_VanishStatus", PlayerVanishStatus.CODEC);
         PlayerVanishStatus.setComponentType(componentType);
 
         // registering systems
@@ -75,11 +74,11 @@ public class HanselVanish extends JavaPlugin {
 
     public void sendFakeJoinMessage(PlayerRef target, String playerName, String worldName) {
         VanishConfig config = configRef.get();
-        if(!config.isFakeJoinAndLeaveMessagesEnabled()) {
+        if (!config.isFakeJoinAndLeaveMessagesEnabled()) {
             return;
         }
 
-        if(!config.useCustomFakeMessages()) {
+        if (!config.useCustomFakeMessages()) {
             target.sendMessage(Message.translation("server.general.playerJoinedWorld").param("username", playerName).param("world", worldName));
         } else {
             target.sendMessage(TinyMsg.parse(config.getCustomFakeJoinMessage().replace("{username}", playerName).replace("{world}", worldName)));
@@ -89,11 +88,11 @@ public class HanselVanish extends JavaPlugin {
 
     public void sendFakeLeaveMessage(PlayerRef target, String playerName, String worldName) {
         VanishConfig config = configRef.get();
-        if(!config.isFakeJoinAndLeaveMessagesEnabled()) {
+        if (!config.isFakeJoinAndLeaveMessagesEnabled()) {
             return;
         }
 
-        if(!config.useCustomFakeMessages()) {
+        if (!config.useCustomFakeMessages()) {
             target.sendMessage(Message.translation("server.general.playerLeftWorld").param("username", playerName).param("world", worldName));
         } else {
             target.sendMessage(TinyMsg.parse(config.getCustomFakeLeaveMessage().replace("{username}", playerName).replace("{world}", worldName)));

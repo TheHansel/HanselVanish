@@ -46,13 +46,13 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
         if(addReason != AddReason.LOAD) return;
         
         Player playerEntity = commandBuffer.getComponent(ref, Player.getComponentType());
-        if(playerEntity == null) {
+        if (playerEntity == null) {
             LOG.atSevere().log("Failed to get Player!");
             return;
         }
 
         World world = playerEntity.getWorld();
-        if(world == null) {
+        if (world == null) {
             LOG.atSevere().log("Failed to get world for player %s", playerEntity.getDisplayName());
             return;
         }
@@ -70,7 +70,7 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
 
             RemoveFromServerPlayerList packet = new RemoveFromServerPlayerList(instance.vanishedPlayers.toArray(new UUID[]{}));
             assert vanishStatus != null;
-            if(vanishStatus.isVanished()) {
+            if (vanishStatus.isVanished()) {
                 Universe.get().getWorlds().forEach((_, iterWorld) -> {
                     iterWorld.execute(() -> {
                         iterWorld.getPlayerRefs().stream().filter(target -> {
@@ -94,7 +94,7 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
                 playerRef.sendMessage(TinyMsg.parse("<c:green>You are still invisible."));
             }
 
-            if(playerEntity.hasPermission("hanselvanish.canseevanished")) {
+            if (playerEntity.hasPermission("hanselvanish.canseevanished")) {
                 return;
             }
 
