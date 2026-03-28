@@ -1,5 +1,4 @@
 package pl.hansel101.hanselvanish;
-
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -12,10 +11,10 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import fi.sulku.hytale.TinyMsg;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
-import pl.hansel101.hanselvanish.Commands.HanselVanishCommand;
-import pl.hansel101.hanselvanish.Commands.VanishCommand;
-import pl.hansel101.hanselvanish.Components.PlayerVanishStatus;
-import pl.hansel101.hanselvanish.Systems.PlayerJoinSystem;
+import pl.hansel101.hanselvanish.commands.HanselVanishCommand;
+import pl.hansel101.hanselvanish.commands.VanishCommand;
+import pl.hansel101.hanselvanish.components.PlayerVanishStatus;
+import pl.hansel101.hanselvanish.systems.PlayerJoinSystem;
 
 import java.util.Set;
 import java.util.UUID;
@@ -42,7 +41,7 @@ public class HanselVanish extends JavaPlugin {
         configStore.save().thenRun(() -> {
             configStore.load().thenAccept(configRef::set);
         });
-
+        
         ComponentRegistryProxy<EntityStore> registry = this.getEntityStoreRegistry();
 
         // registering components
@@ -58,6 +57,7 @@ public class HanselVanish extends JavaPlugin {
         commandRegistry.registerCommand(new VanishCommand(this, "vanish", "Toggles vanish for player", false));
         commandRegistry.registerCommand(new HanselVanishCommand(this, "hanselvanish", "Manage HanselVanish plugin"));
     }
+
 
     public CompletableFuture<Long> reloadConfig() {
         LOG.atInfo().log("Reloading HanselVanish...");

@@ -1,4 +1,4 @@
-package pl.hansel101.hanselvanish.Commands;
+package pl.hansel101.hanselvanish.commands;
 
 import com.buuz135.mhud.MultipleHUD;
 import com.hypixel.hytale.component.Ref;
@@ -17,10 +17,10 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import fi.sulku.hytale.TinyMsg;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
-import pl.hansel101.hanselvanish.Components.PlayerVanishStatus;
+import pl.hansel101.hanselvanish.components.PlayerVanishStatus;
 import pl.hansel101.hanselvanish.HanselVanish;
-import pl.hansel101.hanselvanish.UI.Empty;
-import pl.hansel101.hanselvanish.UI.VanishStatus;
+import pl.hansel101.hanselvanish.ui.Empty;
+import pl.hansel101.hanselvanish.ui.VanishStatus;
 
 import java.util.Objects;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package pl.hansel101.hanselvanish.Components;
+package pl.hansel101.hanselvanish.components;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
