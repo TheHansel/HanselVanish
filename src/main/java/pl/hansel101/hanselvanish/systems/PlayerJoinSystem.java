@@ -26,7 +26,7 @@ import static pl.hansel101.hanselvanish.HanselVanish.LOG;
 
 
 public class PlayerJoinSystem extends RefSystem<EntityStore> {
-    HanselVanish instance;
+    final HanselVanish instance;
 
     public PlayerJoinSystem(HanselVanish instance) {
         this.instance = instance;
@@ -64,12 +64,12 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
             PlayerVanishStatus vanishStatus = store.getComponent(ref, PlayerVanishStatus.getComponentType());
             if(vanishStatus == null) {
                 commandBuffer.addComponent(ref, PlayerVanishStatus.getComponentType(), new PlayerVanishStatus());
+                vanishStatus = new PlayerVanishStatus(false);
             }
 
             UUID playerUUID = playerRef.getUuid();
 
             RemoveFromServerPlayerList packet = new RemoveFromServerPlayerList(instance.vanishedPlayers.toArray(new UUID[]{}));
-            assert vanishStatus != null;
             if (vanishStatus.isVanished()) {
                 Universe.get().getWorlds().forEach((_, iterWorld) -> {
                     iterWorld.execute(() -> {

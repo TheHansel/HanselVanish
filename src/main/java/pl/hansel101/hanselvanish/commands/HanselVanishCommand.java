@@ -1,4 +1,4 @@
-package pl.hansel101.hanselvanish.Commands;
+package pl.hansel101.hanselvanish.commands;
 
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
@@ -47,10 +47,8 @@ public class HanselVanishCommand extends AbstractCommandCollection {
         @Override
         protected CompletableFuture<Void> executeAsync(@NonNullDecl CommandContext ctx) {
             ctx.sendMessage(TinyMsg.parse("<c:gold>Reloading HanselVanish config..."));
-            instance.reloadConfig().thenAccept(time -> {
-                ctx.sendMessage(TinyMsg.parse("<c:green>Reloaded HanselVanish config in <gold>" + time / 1_000_000.0D + "ms"));
-            });
-
+            instance.reloadConfig().thenAccept(time -> ctx.sendMessage(TinyMsg.parse("<c:green>Reloaded HanselVanish config in <gold>" + time / 1_000_000.0D + "ms")));
+            
             return CompletableFuture.completedFuture(null);
         }
     }

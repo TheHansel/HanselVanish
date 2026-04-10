@@ -23,8 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class HanselVanish extends JavaPlugin {
+
     public static HytaleLogger LOG;
-    public Set<UUID> vanishedPlayers = ConcurrentHashMap.newKeySet();
+    public final Set<UUID> vanishedPlayers = ConcurrentHashMap.newKeySet();
 
     private final Config<VanishConfig> configStore = this.withConfig(VanishConfig.CODEC);
     private final AtomicReference<VanishConfig> configRef = new AtomicReference<>();
@@ -38,10 +39,9 @@ public class HanselVanish extends JavaPlugin {
         LOG = HytaleLogger.forEnclosingClass();
         LOG.atInfo().log("Loading HanselVanish!");
 
-        configStore.save().thenRun(() -> {
-            configStore.load().thenAccept(configRef::set);
-        });
-        
+        configStore.save().thenRun(() -> configStore.load().thenAccept(configRef::set));
+
+
         ComponentRegistryProxy<EntityStore> registry = this.getEntityStoreRegistry();
 
         // registering components
