@@ -1,7 +1,8 @@
 {
   "Group": "pl.hansel101",
   "Name": "HanselVanish",
-  "Version": "1.6",
+  "Version": "1.7",
+  "ServerVersion": "2026.03.26-89796e57b",
   "Main": "pl.hansel101.hanselvanish.HanselVanish",
   "IncludesAssetPack": true,
   "Authors": [

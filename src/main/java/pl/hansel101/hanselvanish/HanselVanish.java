@@ -1,6 +1,7 @@
 package pl.hansel101.hanselvanish;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandRegistry;
@@ -13,7 +14,11 @@ import fi.sulku.hytale.TinyMsg;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import pl.hansel101.hanselvanish.commands.HanselVanishCommand;
 import pl.hansel101.hanselvanish.commands.VanishCommand;
-import pl.hansel101.hanselvanish.components.PlayerVanishStatus;
+import pl.hansel101.hanselvanish.components.PlayerVanished;
+import pl.hansel101.hanselvanish.events.VanishDisableEvent;
+import pl.hansel101.hanselvanish.events.VanishEnableEvent;
+import pl.hansel101.hanselvanish.handlers.VanishDisableHandler;
+import pl.hansel101.hanselvanish.handlers.VanishEnableHandler;
 import pl.hansel101.hanselvanish.systems.PlayerJoinSystem;
 
 import java.util.Set;
@@ -23,6 +28,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class HanselVanish extends JavaPlugin {
+    public static final String PERMISSION_CANSEEVANISHED = "hanselvanish.canseevanished";
+    public static final String PERMISSION_COMMAND_VANISH = "hanselvanish.command.vanish";
+    public static final String PERMISSION_COMMAND_MANAGE = "hanselvanish.command.manage";
+
 
     public static HytaleLogger LOG;
     public final Set<UUID> vanishedPlayers = ConcurrentHashMap.newKeySet();
@@ -42,12 +51,18 @@ public class HanselVanish extends JavaPlugin {
         configStore.save().thenRun(() -> configStore.load().thenAccept(configRef::set));
 
 
-        ComponentRegistryProxy<EntityStore> registry = this.getEntityStoreRegistry();
+        // registering events
+        EventRegistry eventRegistry =  this.getEventRegistry();
+        eventRegistry.register(VanishEnableEvent.class, new VanishEnableHandler(this));
+        eventRegistry.register(VanishDisableEvent.class, new VanishDisableHandler(this));
 
         // registering components
-        ComponentType<EntityStore, PlayerVanishStatus> componentType =
-                registry.registerComponent(PlayerVanishStatus.class, "HanselVanish_VanishStatus", PlayerVanishStatus.CODEC);
-        PlayerVanishStatus.setComponentType(componentType);
+        ComponentRegistryProxy<EntityStore> registry = this.getEntityStoreRegistry();
+
+
+        ComponentType<EntityStore, PlayerVanished> componentType =
+                registry.registerComponent(PlayerVanished.class, "HanselVanish_PlayerVanished", PlayerVanished.CODEC);
+        PlayerVanished.setComponentType(componentType);
 
         // registering systems
         registry.registerSystem(new PlayerJoinSystem(this));

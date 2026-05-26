@@ -9,6 +9,8 @@ import pl.hansel101.hanselvanish.HanselVanish;
 
 import java.util.concurrent.CompletableFuture;
 
+import static pl.hansel101.hanselvanish.HanselVanish.PERMISSION_COMMAND_MANAGE;
+
 public class HanselVanishCommand extends AbstractCommandCollection {
     final HanselVanish instance;
 
@@ -18,6 +20,7 @@ public class HanselVanishCommand extends AbstractCommandCollection {
 
         addSubCommand(new VersionCommand("version", "Shows plugin version", false));
         addSubCommand(new ReloadCommand("reload", "Reloads plugin config", false));
+        requirePermission(PERMISSION_COMMAND_MANAGE);
     }
 
     private class VersionCommand extends AbstractAsyncCommand {
@@ -40,7 +43,7 @@ public class HanselVanishCommand extends AbstractCommandCollection {
     private class ReloadCommand extends AbstractAsyncCommand {
         public ReloadCommand(@NonNullDecl String name, @NonNullDecl String description, boolean requiresConfirmation) {
             super(name, description, requiresConfirmation);
-            requirePermission("hanselvanish.reload");
+            requirePermission(PERMISSION_COMMAND_MANAGE);
         }
 
         @NonNullDecl

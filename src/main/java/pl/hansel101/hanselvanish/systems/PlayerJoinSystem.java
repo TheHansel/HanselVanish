@@ -15,14 +15,15 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import fi.sulku.hytale.TinyMsg;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
-import pl.hansel101.hanselvanish.components.PlayerVanishStatus;
 import pl.hansel101.hanselvanish.HanselVanish;
+import pl.hansel101.hanselvanish.components.PlayerVanished;
 import pl.hansel101.hanselvanish.ui.VanishStatus;
 
 import java.util.Objects;
 import java.util.UUID;
 
 import static pl.hansel101.hanselvanish.HanselVanish.LOG;
+import static pl.hansel101.hanselvanish.HanselVanish.PERMISSION_CANSEEVANISHED;
 
 
 public class PlayerJoinSystem extends RefSystem<EntityStore> {
@@ -51,34 +52,30 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
             return;
         }
 
+
         World world = playerEntity.getWorld();
         if (world == null) {
             LOG.atSevere().log("Failed to get world for player %s", playerEntity.getDisplayName());
             return;
         }
 
+
         world.execute(() -> {
             PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
             assert playerRef != null;
 
-            PlayerVanishStatus vanishStatus = store.getComponent(ref, PlayerVanishStatus.getComponentType());
-            if(vanishStatus == null) {
-                commandBuffer.addComponent(ref, PlayerVanishStatus.getComponentType(), new PlayerVanishStatus());
-                vanishStatus = new PlayerVanishStatus(false);
-            }
-
             UUID playerUUID = playerRef.getUuid();
 
             RemoveFromServerPlayerList packet = new RemoveFromServerPlayerList(instance.vanishedPlayers.toArray(new UUID[]{}));
-            if (vanishStatus.isVanished()) {
+            if (store.getComponent(ref, PlayerVanished.getComponentType()) != null) {
                 Universe.get().getWorlds().forEach((_, iterWorld) -> {
                     iterWorld.execute(() -> {
                         iterWorld.getPlayerRefs().stream().filter(target -> {
                                     if (Objects.equals(target, playerRef)) {
                                         return false;
                                     }
-                                    if(PermissionsModule.get().hasPermission(target.getUuid(), "hanselvanish.canseevanished")) {
-                                        target.sendMessage(TinyMsg.parse("<c:#CCCCCC><i>" + playerRef.getUsername() + " <c:#C2C2C2>has joined vanished."));
+                                    if(PermissionsModule.get().hasPermission(target.getUuid(), PERMISSION_CANSEEVANISHED)) {
+                                        target.sendMessage(TinyMsg.parse("<c:#CCCCCC><i>" + playerRef.getUsername() + " <c:#C2C2C2>has joined while vanished."));
                                         return false;
                                     }
 
@@ -94,7 +91,7 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
                 playerRef.sendMessage(TinyMsg.parse("<c:green>You are still invisible."));
             }
 
-            if (playerEntity.hasPermission("hanselvanish.canseevanished")) {
+            if (playerEntity.hasPermission(PERMISSION_CANSEEVANISHED)) {
                 return;
             }
 
@@ -106,7 +103,6 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
             });
 
 
-
             playerEntity.getWorldMapTracker().setPlayerMapFilter(who -> instance.vanishedPlayers.contains(who.getUuid()));
         });
     }
@@ -116,6 +112,5 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
                                @NonNullDecl RemoveReason removeReason,
                                @NonNullDecl Store<EntityStore> store,
                                @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-
     }
 }
