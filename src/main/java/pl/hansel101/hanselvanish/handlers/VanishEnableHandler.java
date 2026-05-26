@@ -1,6 +1,5 @@
 package pl.hansel101.hanselvanish.handlers;
 
-import com.buuz135.mhud.MultipleHUD;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.RemoveFromServerPlayerList;
@@ -94,14 +93,12 @@ public class VanishEnableHandler implements Consumer<VanishEnableEvent> {
 
         Player playerEntity = store.getComponent(ref, Player.getComponentType());
         if (playerEntity != null) {
-            MultipleHUD.getInstance().setCustomHud(playerEntity, player, "HanselVanish_VanishStatus", new VanishStatus(player));
+            playerEntity.getHudManager().addCustomHud(player, new VanishStatus(player));
         } else {
             LOG.atWarning().log("Failed to get Player object. Vanish status hud won't be displayed!");
         }
 
         store.addComponent(ref, PlayerVanished.getComponentType());
         instance.vanishedPlayers.add(playerUUID);
-
-        // TODO: vanish enable logic
     }
 }

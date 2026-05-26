@@ -32,6 +32,7 @@ public class HanselVanish extends JavaPlugin {
     public static final String PERMISSION_COMMAND_VANISH = "hanselvanish.command.vanish";
     public static final String PERMISSION_COMMAND_MANAGE = "hanselvanish.command.manage";
 
+    public static final String HUD_KEY_STATUS = "HanselVanish_VanishStatus";
 
     public static HytaleLogger LOG;
     public final Set<UUID> vanishedPlayers = ConcurrentHashMap.newKeySet();

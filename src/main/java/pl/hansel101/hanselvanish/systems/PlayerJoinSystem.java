@@ -1,6 +1,5 @@
 package pl.hansel101.hanselvanish.systems;
 
-import com.buuz135.mhud.MultipleHUD;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefSystem;
@@ -55,7 +54,7 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
 
         World world = playerEntity.getWorld();
         if (world == null) {
-            LOG.atSevere().log("Failed to get world for player %s", playerEntity.getDisplayName());
+            LOG.atSevere().log("Failed to get world");
             return;
         }
 
@@ -87,11 +86,10 @@ public class PlayerJoinSystem extends RefSystem<EntityStore> {
                 });
 
                 instance.vanishedPlayers.add(playerUUID);
-                MultipleHUD.getInstance().setCustomHud(playerEntity, playerRef, "HanselVanish_VanishStatus", new VanishStatus(playerRef));
-                playerRef.sendMessage(TinyMsg.parse("<c:green>You are still invisible."));
+                playerEntity.getHudManager().addCustomHud(playerRef, new VanishStatus(playerRef));
             }
 
-            if (playerEntity.hasPermission(PERMISSION_CANSEEVANISHED)) {
+            if (playerRef.hasPermission(PERMISSION_CANSEEVANISHED)) {
                 return;
             }
 

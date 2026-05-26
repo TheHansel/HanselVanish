@@ -33,8 +33,6 @@ public class HanselVanishCommand extends AbstractCommandCollection {
         @Override
         protected CompletableFuture<Void> executeAsync(@NonNullDecl CommandContext ctx) {
             ctx.sendMessage(TinyMsg.parse("<c:green>HanselVanish <c:gold>v" + instance.getManifest().getVersion().toString()));
-            ctx.sendMessage(TinyMsg.parse("<gray>Github repo: <white><u><link:https://github.com/TheHansel/HanselVanish>github.com/TheHansel/HanselVanish</link>"));
-            ctx.sendMessage(TinyMsg.parse("<gray>CurseForge page: <white><u><link:https://www.curseforge.com/hytale/mods/hansel-vanish>curseforge.com/hytale/mods/hansel-vanish</link>"));
 
             return CompletableFuture.completedFuture(null);
         }
